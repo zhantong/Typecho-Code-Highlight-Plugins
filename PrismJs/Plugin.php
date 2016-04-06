@@ -96,6 +96,7 @@ EOF;
     public static function footer()
     {
         $jsUrl = Helper::options()->pluginUrl.'/PrismJs/res/prism.js';
+        $renderUrl=Helper::options()->pluginUrl.'/PrismJs/res/render.js';
         echo <<<EOF
         <script type="text/javascript">
         $.ajax({
@@ -103,7 +104,7 @@ EOF;
             cache:true,
             dataType:"script",
             success:function(){
-                Prism.highlightAll();
+                $.getScript("$renderUrl");
             }
         });
         </script>
@@ -157,7 +158,6 @@ EOF;
         if (in_array('showLineNumber', Helper::options()->plugin('PrismJs')->preference)) {
             $text = str_replace('<pre>', '<pre class="line-numbers">', $text);
         }
-
         return $text;
     }
 }
