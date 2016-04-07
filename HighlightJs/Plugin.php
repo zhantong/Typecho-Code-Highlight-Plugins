@@ -93,6 +93,7 @@ EOF;
     public static function footer()
     {
         $jsUrl = Helper::options()->pluginUrl.'/HighlightJs/res/highlight.pack.js';
+        $renderUrl=Helper::options()->pluginUrl.'/HighlightJs/res/render.js';
         echo <<<EOF
         <script type="text/javascript">
         $.ajax({
@@ -100,7 +101,7 @@ EOF;
             cache:true,
             dataType:"script",
             success:function(){
-                hljs.initHighlighting();
+                $.getScript("$renderUrl");
             }
         });
         </script>
