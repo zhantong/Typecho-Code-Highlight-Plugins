@@ -61,7 +61,7 @@ print('PrismJs')
 
 ## 注意
 - 需要[jQuery]支持
-- 使插件能够正常渲染Ajax内容，需要Ajax动态载入的内容包括`footer.php`(插件渲染部分由`footer.php`触发)
+- ~~使插件能够正常渲染Ajax内容，需要Ajax动态载入的内容包括`footer.php`(插件渲染部分由`footer.php`触发)~~
 
 ## 安装插件
 将本文件夹移动到Typecho下`usr/plugins/`目录中，注意保持文件夹名为`PrismJs`。

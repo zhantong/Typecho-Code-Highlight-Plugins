@@ -44,7 +44,7 @@ print('HighlightJs')
 括号中是支持的关键字名称，不区分大小写。
 ## 注意
 - 需要[jQuery]支持
-- 使插件能够正常渲染Ajax内容，需要Ajax动态载入的内容包括`footer.php`(插件渲染部分由`footer.php`触发)
+- ~~使插件能够正常渲染Ajax内容，需要Ajax动态载入的内容包括`footer.php`(插件渲染部分由`footer.php`触发)~~
 - 由于HighlightJs本身的原因，不支持显示代码行号
 - 由于HighlightJs本身的原因，不支持行内代码高亮
 
