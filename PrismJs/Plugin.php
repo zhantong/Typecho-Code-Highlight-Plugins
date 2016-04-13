@@ -6,7 +6,7 @@
  *
  * @author Penguin
  *
- * @version 0.0.1
+ * @version 0.0.2
  *
  * @link https://github.com/zhantong1994/Typecho-Code-Highlight-Plugins
  */
@@ -19,7 +19,6 @@ class PrismJs_Plugin implements Typecho_Plugin_Interface
      */
     public static function activate()
     {
-        Typecho_Plugin::factory('Widget_Archive')->header = array('PrismJs_Plugin', 'header');
         Typecho_Plugin::factory('Widget_Archive')->footer = array('PrismJs_Plugin', 'footer');
         Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('PrismJs_Plugin', 'parse');
         Typecho_Plugin::factory('Widget_Abstract_Comments')->contentEx = array('Prismjs_Plugin', 'parse');
@@ -51,6 +50,9 @@ class PrismJs_Plugin implements Typecho_Plugin_Interface
 
         $preference = new Typecho_Widget_Helper_Form_Element_Checkbox('preference', array('showLineNumber' => _t('显示行号')), array('showLineNumber'), _t('偏好设置'));
         $form->addInput($preference);
+
+        $isAjax = new Typecho_Widget_Helper_Form_Element_Checkbox('ajax', array('isAjax' => _t('有Ajax异步加载内容')), array('isAjax'), _t('Ajax渲染设置'));
+        $form->addInput($isAjax);
     }
 
     /**
@@ -62,28 +64,6 @@ class PrismJs_Plugin implements Typecho_Plugin_Interface
     {
     }
 
-    /**
-     * 输出头部css
-     * ajax方式加载.
-     *
-     * @param unknown $header
-     *
-     * @return unknown
-     */
-    public static function header()
-    {
-        $cssUrl = Helper::options()->pluginUrl.'/PrismJs/res/styles/'.Helper::options()->plugin('PrismJs')->style;
-        echo <<<EOF
-        <script type="text/javascript">
-        $.get("$cssUrl", function(css)
-        {
-           $('<style type="text/css"></style>')
-              .html(css)
-              .appendTo("head");
-        });
-        </script>
-EOF;
-    }
 
     /**
      * 输出尾部js
@@ -95,19 +75,24 @@ EOF;
      */
     public static function footer()
     {
+        $cssUrl = Helper::options()->pluginUrl.'/PrismJs/res/styles/'.Helper::options()->plugin('PrismJs')->style;
         $jsUrl = Helper::options()->pluginUrl.'/PrismJs/res/prism.js';
         $renderUrl=Helper::options()->pluginUrl.'/PrismJs/res/render.js';
+        $render='Prism.highlightAll();';
+        if (in_array('isAjax', Helper::options()->plugin('PrismJs')->ajax)) {
+            $render='$.getScript("'.$renderUrl.'");';
+        }
         echo <<<EOF
-        <script type="text/javascript">
-        $.ajax({
-            url:"$jsUrl",
-            cache:true,
-            dataType:"script",
-            success:function(){
-                $.getScript("$renderUrl");
-            }
-        });
-        </script>
+                <script type="text/javascript">
+                $.when(
+                    $.get("$cssUrl",function(css){
+                        $('<style type="text/css"></style>').html(css).appendTo("head");
+                    }),
+                    $.getScript("$jsUrl")
+                ).then(function(){
+                    {$render}
+                });
+                </script>
 EOF;
     }
     public static $langNames = [

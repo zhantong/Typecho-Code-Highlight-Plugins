@@ -6,7 +6,7 @@
  *
  * @author Penguin
  *
- * @version 0.0.1
+ * @version 0.0.2
  *
  * @link https://github.com/zhantong1994/Typecho-Code-Highlight-Plugins
  */
@@ -19,7 +19,6 @@ class HighlightJs_Plugin implements Typecho_Plugin_Interface
      */
     public static function activate()
     {
-        Typecho_Plugin::factory('Widget_Archive')->header = array('HighlightJs_Plugin', 'header');
         Typecho_Plugin::factory('Widget_Archive')->footer = array('HighlightJs_Plugin', 'footer');
         Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('HighlightJs_Plugin', 'parse');
         Typecho_Plugin::factory('Widget_Abstract_Comments')->contentEx = array('HighlightJs_Plugin', 'parse');
@@ -48,6 +47,9 @@ class HighlightJs_Plugin implements Typecho_Plugin_Interface
         $style = new Typecho_Widget_Helper_Form_Element_Select('style', $styles, 'default.css',
             _t('代码高亮主题'));
         $form->addInput($style->addRule('enum', _t('必须选择主题'), $styles));
+
+        $isAjax = new Typecho_Widget_Helper_Form_Element_Checkbox('ajax', array('isAjax' => _t('有Ajax异步加载内容')), array('isAjax'), _t('Ajax渲染设置'));
+        $form->addInput($isAjax);
     }
 
     /**
@@ -59,28 +61,6 @@ class HighlightJs_Plugin implements Typecho_Plugin_Interface
     {
     }
 
-    /**
-     * 输出头部css
-     * ajax方式加载.
-     *
-     * @param unknown $header
-     *
-     * @return unknown
-     */
-    public static function header()
-    {
-        $cssUrl = Helper::options()->pluginUrl.'/HighlightJs/res/styles/'.Helper::options()->plugin('HighlightJs')->style;
-        echo <<<EOF
-        <script type="text/javascript">
-        $.get("$cssUrl", function(css)
-        {
-           $('<style type="text/css"></style>')
-              .html(css)
-              .appendTo("head");
-        });
-        </script>
-EOF;
-    }
 
     /**
      * 输出尾部js
@@ -92,19 +72,24 @@ EOF;
      */
     public static function footer()
     {
+        $cssUrl = Helper::options()->pluginUrl.'/HighlightJs/res/styles/'.Helper::options()->plugin('HighlightJs')->style;
         $jsUrl = Helper::options()->pluginUrl.'/HighlightJs/res/highlight.pack.js';
         $renderUrl=Helper::options()->pluginUrl.'/HighlightJs/res/render.js';
+        $render='hljs.initHighlighting();';
+        if (in_array('isAjax', Helper::options()->plugin('HighlightJs')->ajax)) {
+            $render='$.getScript("'.$renderUrl.'");';
+        }
         echo <<<EOF
-        <script type="text/javascript">
-        $.ajax({
-            url:"$jsUrl",
-            cache:true,
-            dataType:"script",
-            success:function(){
-                $.getScript("$renderUrl");
-            }
-        });
-        </script>
+                <script type="text/javascript">
+                $.when(
+                    $.get("$cssUrl",function(css){
+                        $('<style type="text/css"></style>').html(css).appendTo("head");
+                    }),
+                    $.getScript("$jsUrl")
+                ).then(function(){
+                    {$render}
+                });
+                </script>
 EOF;
     }
     public static $langNames = [
