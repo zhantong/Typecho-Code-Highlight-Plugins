@@ -21,7 +21,7 @@ class PrismJs_Plugin implements Typecho_Plugin_Interface
     {
         Typecho_Plugin::factory('Widget_Archive')->footer = array('PrismJs_Plugin', 'footer');
         Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('PrismJs_Plugin', 'parse');
-        Typecho_Plugin::factory('Widget_Abstract_Comments')->contentEx = array('Prismjs_Plugin', 'parse');
+        //Typecho_Plugin::factory('Widget_Abstract_Comments')->contentEx = array('Prismjs_Plugin', 'parse');
     }
 
     /**

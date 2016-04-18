@@ -21,7 +21,7 @@ class HighlightJs_Plugin implements Typecho_Plugin_Interface
     {
         Typecho_Plugin::factory('Widget_Archive')->footer = array('HighlightJs_Plugin', 'footer');
         Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('HighlightJs_Plugin', 'parse');
-        Typecho_Plugin::factory('Widget_Abstract_Comments')->contentEx = array('HighlightJs_Plugin', 'parse');
+        //Typecho_Plugin::factory('Widget_Abstract_Comments')->contentEx = array('HighlightJs_Plugin', 'parse');
     }
 
     /**
