@@ -1,5 +1,8 @@
-var render_hljs=function(){
+function do_render(){
     hljs.initHighlighting();
+}
+var render_hljs=function(){
+    do_render();
     var titleEl = document.getElementsByTagName("title")[0];
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
     if(MutationObserver){
@@ -9,13 +12,13 @@ var render_hljs=function(){
             characterData: true
         };
         var observer=new MutationObserver(function(mutations){
-            hljs.initHighlighting();
+            do_render();
         });
         observer.observe(titleEl,MutationObserverConfig);
     }
     else if(titleEl.addEventListener){
         titleEl.addEventListener("DOMSubtreeModified", function(evt) {
-            hljs.initHighlighting();
+            do_render();
         }, false);
     }
     else{
